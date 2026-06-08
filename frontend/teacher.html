@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель викладача | EduPlatform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf-plugin-autotable.min.js"></script>
+</head>
+
+<body class="dashboard-page">
+
+<aside class="sidebar">
+    <div class="sidebar-top-content">
+        <div class="sidebar-brand">
+            <div style="background:#6366f1; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px;">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+            <div style="display:flex; flex-direction:column;">
+                <h2>EduPlatform</h2>
+                <span style="font-size:12px; color:rgba(255,255,255,0.6); font-weight:500;">
+                    Кабінет викладача
+                </span>
+            </div>
+        </div>
+
+        <nav class="nav-group">
+    <button class="nav-item" data-target="dashboard-sec" id="btn-dashboard" type="button">
+        <i class="fa-solid fa-house"></i>
+        <span>Головна аналітика</span>
+    </button>
+    <button class="nav-item" data-target="journal-sec" id="btn-grades" type="button">
+        <i class="fa-solid fa-book-open"></i>
+        <span>Журнал успішності</span>
+    </button>
+    <button class="nav-item" data-target="students-sec" id="btn-students" type="button">
+        <i class="fa-solid fa-users"></i>
+        <span>Список студентів</span>
+    </button>
+    <button class="nav-item" data-target="schedule-sec" id="btn-schedule" type="button">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span>Розклад занять</span>
+    </button>
+    <button class="nav-item" data-target="settings-sec" id="btn-settings" type="button">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Налаштування профілю</span>
+    </button>
+</nav>
+    </div>
+
+    <div class="sidebar-calendar-box">
+        <div class="cal-title" id="mini-cal-month">...</div>
+        <div class="cal-days-grid">
+            <div class="cal-week-day">Пн</div>
+            <div class="cal-week-day">Вт</div>
+            <div class="cal-week-day">Ср</div>
+            <div class="cal-week-day">Чт</div>
+            <div class="cal-week-day">Пт</div>
+            <div class="cal-week-day">Сб</div>
+            <div class="cal-week-day">Нд</div>
+        </div>
+        <div class="cal-days-grid" id="mini-calendar-days"></div>
+    </div>
+
+    <div class="sidebar-footer">
+        <button id="btn-logout-system" type="button">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Вийти з профілю
+        </button>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="main-header">
+        <div class="header-title">
+            <h1 id="main-title">Аналітика викладача</h1>
+            <p id="current-date" class="header-date-badge">
+                <i class="fa-regular fa-calendar"></i>
+                <span class="skeleton-text">Оновлення даних...</span>
+            </p>
+        </div>
+
+        <div class="user-profile">
+            <div class="avatar" id="user-avatar-container">
+                <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div class="user-info">
+                <h3 id="teacher-name" class="skeleton-text">Завантаження профілю...</h3>
+                <span class="user-role" id="teacher-degree">Посада: —</span>
+            </div>
+        </div>
+    </header>
+
+<div class="content-body" id="main-report-area">
+    <div class="global-report-toolbar" style="background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h4 style="margin: 0 0 4px 0; color: #0f172a; font-size: 15px; font-weight: 600;">EduPlatform</h4>
+            <p style="margin: 0; color: #64748b; font-size: 12px;">Цифрова екосистема: управління навчальним процесом, розкладом та аналітикою успішності</p>
+        </div>
+        <div class="toolbar-actions" style="display: flex; gap: 10px;">
+            <div style="background: #0f172a; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; user-select: none;">
+                <i class="fa-solid fa-circle-check" style="color: #10b981;" aria-hidden="true"></i> Система активна
+            </div>
+        </div>
+    </div>
+
+        <section id="dashboard-sec" class="content-section">
+    <div class="analytics-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 24px;">
+        
+        <div class="card-metric">
+            <div class="metric-icon" style="color: #4f46e5;"><i class="fa-solid fa-book"></i></div>
+            <div class="metric-info">
+                <h4 id="metric-subjects-count">0</h4>
+                <p>Дисциплін викладається</p>
+            </div>
+        </div>
+        
+        <div class="card-metric">
+            <div class="metric-icon" style="color: #06b6d4;"><i class="fa-solid fa-users"></i></div>
+            <div class="metric-info">
+                <h4 id="metric-groups-count">0</h4>
+                <p>Академічних груп</p>
+            </div>
+        </div>
+        
+        <div class="card-metric">
+            <div class="metric-icon" style="color: #16a34a;"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="metric-info">
+                <h4 id="metric-gpa-total">0.0</h4>
+                <p>Середній бал</p>
+            </div>
+        </div>
+        
+        <div class="card-metric" style="border-left: 4px solid #b91c1c; background: #fef2f2;">
+            <div class="metric-icon" style="color: #b91c1c;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="metric-info">
+                <h4 id="metric-risk-count" style="color: #991b1b; font-weight: 700;">0</h4>
+                <p style="color: #7f1d1d; font-weight: 500;">Студенти в зоні ризику</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="dashboard-chart-section" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 24px;">
+        <h5 style="margin-top:0; margin-bottom:15px; font-weight:600; color:#1e293b; font-size: 15px;">Успішність груп та відвідуваність пар викладача</h5>
+        <div id="subjects-performance-dashboard">
+            <p style="text-align:center; padding:30px; color:#64748b;">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Завантаження аналітичних графіків...
+            </p>
+        </div>
+    </div>
+
+    <div class="dashboard-middle-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; margin-bottom: 24px; width: 100%;">
+    
+    <div style="background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; height: 320px; box-sizing: border-box;">
+        <h5 style="margin-top: 0; margin-bottom: 15px; font-size: 15px; color: #1e293b; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-chart-pie" style="color: #4f46e5;"></i> Розподіл студентів за успішністю
+        </h5>
+        <div style="position: relative; flex-grow: 1; width: 100%; height: 200px; display: flex; align-items: center; justify-content: center;">
+            <canvas id="studentPerformancePieChart"></canvas>
+        </div>
+        <p style="margin-top: 10px; margin-bottom: 0; font-size: 11px; color: #64748b; line-height: 1.4; text-align: center;">
+            * Розраховується на основі середнього балу кожного студента з ваших дисциплін
+        </p>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; height: 320px; box-sizing: border-box;">
+        <h5 style="margin-top: 0; margin-bottom: 15px; font-size: 15px; color: #1e293b; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-graduation-cap" style="color: #10b981;"></i> Кількість студентів у моїх групах
+        </h5>
+        <div id="teacher-groups-chart-container" style="position: relative; flex-grow: 1; width: 100%; height: 220px;">
+            <canvas id="teacherGroupsBarChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+    <div class="dashboard-details-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px;">
+        
+        <div class="details-box" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h5 style="margin-top:0; margin-bottom:15px; font-weight:600; color:#991b1b; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-user-slash"></i> Студенти в зоні ризику
+            </h5>
+            <div class="custom-scroll" style="overflow-x: auto; max-height: 280px;">
+                <table class="table-modern" style="width:100%; border-collapse:collapse; text-align:left; font-size:14px;">
+                    <thead>
+                        <tr style="border-bottom:2px solid #f1f5f9; color:#64748b; background:#f8fafc;">
+                            <th style="padding:10px 8px; font-weight:600;">Студент</th>
+                            <th style="padding:10px 8px; font-weight:600;">Група</th>
+                            <th style="padding:10px 8px; font-weight:600;">Дисципліна</th>
+                            <th style="padding:10px 8px; text-align:center; font-weight:600;">Бал</th>
+                            <th style="padding:10px 8px; text-align:center; font-weight:600;">Пропуски</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-risk-students-list">
+                        <tr><td colspan="5" style="text-align:center; padding:15px; color:#94a3b8;">Дані завантажуються...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="details-box" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h5 style="margin-top:0; margin-bottom:15px; font-weight:600; color:#1e293b; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-chart-pie"></i> Статистика відвідування занять
+            </h5>
+            <div class="custom-scroll" style="overflow-x: auto; max-height: 280px;">
+                <table class="table-modern" style="width:100%; border-collapse:collapse; text-align:left; font-size:14px;">
+                    <thead>
+                        <tr style="border-bottom:2px solid #f1f5f9; color:#64748b; background:#f8fafc;">
+                            <th style="padding:10px 8px; font-weight:600;">Дисципліна</th>
+                            <th style="padding:10px 8px; font-weight:600;">Група</th>
+                            <th style="padding:10px 8px; text-align:center; width:130px; font-weight:600;">Відвідуваність</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-attendance-subjects-list">
+                        <tr><td colspan="3" style="text-align:center; padding:15px; color:#94a3b8;">Дані завантажуються...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<section id="journal-sec" class="content-section section-hidden animate-fade-up" style="display: none; max-width: 1280px; width: 100%; margin: 0 auto; padding: 0 20px; box-sizing: border-box;">
+    
+    <div class="grades-toolbar-modern" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 20px; border-radius: 20px; border: 1px solid rgba(226, 232, 240, 0.7); margin-bottom: 24px; box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.05); width: 100%; box-sizing: border-box; position: relative; z-index: 10;">
+        <div class="toolbar-controls-group" style="display: flex; flex-direction: column; gap: 16px; width: 100%;">
+            
+            <div style="display: flex; flex-direction: row; align-items: flex-end; justify-content: flex-start; gap: 20px; width: 100%; flex-wrap: wrap;">
+                
+                <div style="display: flex; flex-direction: column; gap: 6px; flex: 1.2; min-width: 250px;">
+                    <label style="font-size: 11px; font-weight: 800; color: #4f46e5; text-transform: uppercase; letter-spacing: 1px;">Дисципліна:</label>
+                    <select id="journal-subject-filter" class="select-premium" style="width: 100%; padding: 0 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 600; font-size: 13px; color: #0f172a; background: #fff; outline: none; height: 46px; box-sizing: border-box; transition: all 0.3s ease; cursor: pointer;">
+                        <option value="">Оберіть дисципліну з розкладу...</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 6px; flex: 0.8; min-width: 200px;">
+                    <label style="font-size: 11px; font-weight: 800; color: #4f46e5; text-transform: uppercase; letter-spacing: 1px;">Група:</label>
+                    <select id="journal-group-filter" class="select-premium" style="width: 100%; padding: 0 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 600; font-size: 13px; color: #64748b; background: #f8fafc; outline: none; height: 46px; box-sizing: border-box; transition: all 0.3s ease;" disabled>
+                        <option value="">Оберіть спочатку дисципліну</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px; width: auto; min-width: 450px; box-sizing: border-box; flex-grow: 1;">
+                    <button type="button" id="btn-load-journal" class="btn-glow-primary" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #fff; border: none; flex: 1.5; padding: 0 16px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 25px -5px rgba(99, 102, 241, 0.35); height: 46px; font-size: 13px; white-space: nowrap; box-sizing: border-box; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+                        <i class="fa-solid fa-table-cells" style="font-size: 14px;"></i> Сформувати відомість
+                    </button>
+
+                    <button type="button" id="btn-journal-excel" style="background: #f0fdf4; color: #166534; border: 2px solid #bbf7d0; height: 46px; flex: 0.8; padding: 0 14px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;" onmouseover="this.style.background='#eafaf1'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#f0fdf4'; this.style.transform='translateY(0)';">
+                        <i class="fa-solid fa-file-excel" style="font-size: 14px; color: #15803d;"></i> Excel
+                    </button>
+
+                    <button type="button" id="btn-journal-pdf" style="background: #fef2f2; color: #991b1b; border: 2px solid #fecaca; height: 46px; flex: 0.8; padding: 0 14px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;" onmouseover="this.style.background='#fde8e8'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#fef2f2'; this.style.transform='translateY(0)';">
+                        <i class="fa-solid fa-file-pdf" style="font-size: 14px; color: #dc2626;"></i> PDF
+                    </button>
+
+                    <button type="button" id="btn-close-journal" class="btn-clear-modern" style="background: #fff; color: #64748b; border: 2px solid #e2e8f0; height: 46px; width: 46px; min-width: 46px; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; box-sizing: border-box;" title="Закрити журнал" onmouseover="this.style.borderColor='#fca5a5'; this.style.color='#ef4444'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='#e2e8f0'; this.style.color='#64748b'; this.style.transform='translateY(0)';">
+                        <i class="fa-solid fa-square-xmark" style="font-size: 18px;"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
+                <label style="font-size: 11px; font-weight: 800; color: #4f46e5; text-transform: uppercase; letter-spacing: 1px;">Відображати оцінки за період:</label>
+                <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                    <div style="flex: 1;">
+                        <input type="date" id="journal-date-from" style="width: 100%; height: 46px; border: 2px solid #e2e8f0; border-radius: 12px; padding: 0 16px; font-size: 13px; font-weight: 600; color: #0f172a; background: #fff; outline: none; box-sizing: border-box; transition: all 0.3s ease; cursor: pointer;" onfocus="this.style.borderColor='#4f46e5';" onblur="this.style.borderColor='#e2e8f0';">
+                    </div>
+                    <span style="color: #94a3b8; font-weight: 700; font-size: 13px; user-select: none;">до</span>
+                    <div style="flex: 1;">
+                        <input type="date" id="journal-date-to" style="width: 100%; height: 46px; border: 2px solid #e2e8f0; border-radius: 12px; padding: 0 16px; font-size: 13px; font-weight: 600; color: #0f172a; background: #fff; outline: none; box-sizing: border-box; transition: all 0.3s ease; cursor: pointer;" onfocus="this.style.borderColor='#4f46e5';" onblur="this.style.borderColor='#e2e8f0';">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="journal-table-wrapper" style="background: transparent; border: none; box-shadow: none; width: 100%; box-sizing: border-box; height: auto;">
+        <div id="journal-placeholder" style="height: 240px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 24px; text-align: center; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.06); box-sizing: border-box; width: 100%;">
+            <div class="edu-pure-float style-premium-animate" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; box-shadow: 0 6px 14px -4px rgba(99, 102, 241, 0.2); box-sizing: border-box; flex-shrink: 0;">
+                <i class="fa-solid fa-folder-open" style="font-size: 18px; color: #4f46e5;"></i>
+            </div>
+            <h4 style="font-size: 14px; color: #0f172a; font-weight: 800; margin: 0 0 6px 0; line-height: 1.2;">Модуль обліку та аналітики успішності</h4>
+            <p style="font-size: 12px; color: #64748b; max-width: 460px; margin: 0 auto; line-height: 1.5; font-weight: 500;">Будь ласка, оберіть активну дисципліну та академічну групу для перегляду списку та виставлення поточних оцінок чи відвідуваності.</p>
+        </div>
+    </div>
+</section>
+
+
+<section id="students-sec" class="content-section section-hidden animate-fade-up" style="display: none; max-width: 1280px; width: 100%; margin: 0 auto; padding: 0 20px; box-sizing: border-box;">
+    
+    <div class="grades-toolbar-modern" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 20px; border-radius: 20px; border: 1px solid rgba(226, 232, 240, 0.7); margin-bottom: 24px; box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.05); width: 100%; box-sizing: border-box; position: relative; z-index: 10;">
+        <div class="toolbar-controls-group" style="display: flex; flex-direction: column; gap: 16px; width: 100%;">
+            
+            <div style="display: flex; flex-direction: row; align-items: flex-end; justify-content: flex-start; gap: 20px; width: 100%; flex-wrap: wrap;">
+                
+                <div style="display: flex; flex-direction: column; gap: 6px; flex: 1.2; min-width: 250px;">
+                    <label style="font-size: 11px; font-weight: 800; color: #4f46e5; text-transform: uppercase; letter-spacing: 1px;">Дисципліна:</label>
+                    <select id="students-subject-filter" class="select-premium" style="width: 100%; padding: 0 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 600; font-size: 13px; color: #0f172a; background: #fff; outline: none; height: 46px; box-sizing: border-box; transition: all 0.3s ease; cursor: pointer;">
+                        <option value="">Оберіть дисципліну...</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 6px; flex: 0.8; min-width: 200px;">
+                    <label style="font-size: 11px; font-weight: 800; color: #4f46e5; text-transform: uppercase; letter-spacing: 1px;">Група:</label>
+                    <select id="students-group-filter" class="select-premium" style="width: 100%; padding: 0 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 600; font-size: 13px; color: #64748b; background: #f8fafc; outline: none; height: 46px; box-sizing: border-box; transition: all 0.3s ease;" disabled>
+                        <option value="">Оберіть спочатку дисципліну</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 10px; width: auto; min-width: 350px; box-sizing: border-box; flex-grow: 1;">
+                    <button type="button" id="btn-clear-all-filters" class="btn-clear-modern" style="background: #fff; color: #64748b; border: 2px solid #e2e8f0; height: 46px; flex: 1.2; padding: 0 16px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box;" onmouseover="this.style.borderColor='#cbd5e1'; this.style.color='#ef4444'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='#e2e8f0'; this.style.color='#64748b'; this.style.transform='translateY(0)';">
+                        <i class="fa-solid fa-broom" style="font-size: 14px;"></i> Очистити фільтри
+                    </button>
+
+                    <button type="button" id="btn-students-excel" style="background: #f0fdf4; color: #166534; border: 2px solid #bbf7d0; height: 46px; flex: 0.9; padding: 0 14px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;" onmouseover="this.style.background='#eafaf1'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#f0fdf4'; this.style.transform='translateY(0)';">
+                        <i class="fa-solid fa-file-excel" style="font-size: 14px; color: #15803d;"></i> Excel
+                    </button>
+
+                    <button type="button" id="btn-students-pdf" style="background: #fef2f2; color: #991b1b; border: 2px solid #fecaca; height: 46px; flex: 0.9; padding: 0 14px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;" onmouseover="this.style.background='#fde8e8'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#fef2f2'; this.style.transform='translateY(0)';">
+                        <i class="fa-solid fa-file-pdf" style="font-size: 14px; color: #dc2626;"></i> PDF
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
+                <label style="font-size: 11px; font-weight: 800; color: #4f46e5; text-transform: uppercase; letter-spacing: 1px;">Пошук студента:</label>
+                <div class="search-input-wrapper" style="position: relative; display: flex; align-items: center; width: 100%;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px; z-index: 2;"></i>
+                    <input type="text" id="students-search-input" placeholder="Введіть ПІБ студента для розумного чи глобального пошуку в системі..." style="width:100%; padding: 0 16px 0 44px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 13px; font-weight: 600; color: #0f172a; background: #fff; outline: none; height: 46px; box-sizing: border-box; transition: all 0.3s ease;" onfocus="this.style.borderColor='#4f46e5';" onblur="this.style.borderColor='#e2e8f0';">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="students-list-wrapper" style="background: transparent; border: none; box-shadow: none; width: 100%; box-sizing: border-box; height: auto;">
+        <div id="students-placeholder" style="height: 240px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 24px; text-align: center; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.06); box-sizing: border-box; width: 100%;">
+            <div class="edu-pure-float style-premium-animate" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; box-shadow: 0 6px 14px -4px rgba(99, 102, 241, 0.2); box-sizing: border-box; flex-shrink: 0;">
+                <i class="fa-solid fa-user-graduate" style="font-size: 18px; color: #4f46e5;"></i>
+            </div>
+            <h4 style="font-size: 14px; color: #0f172a; font-weight: 800; margin: 0 0 6px 0; line-height: 1.2;">Списки студентів академічних груп</h4>
+            <p style="font-size: 12px; color: #64748b; max-width: 460px; margin: 0 auto; line-height: 1.5; font-weight: 500;">Будь ласка, оберіть потрібну дисципліну та академічную групу вище, щоб відобразити актуальний список студентів.</p>
+        </div>
+    </div>
+</section>
+
+<section id="schedule-sec" class="content-section section-hidden" aria-label="Розклад занять викладача" style="display: none;">
+    
+    <div class="schedule-toolbar-modern">
+        <div class="schedule-title-block">
+            <h2 class="schedule-main-title">
+                <i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Графік занять
+            </h2>
+            <div id="schedule-week-range" class="week-range-text">Завантаження дат...</div>
+        </div>
+        
+        <div class="week-nav-container-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div class="week-nav-container" style="margin: 0;">
+                <button id="btn-prev-week" class="btn-nav-modern" title="Минулий тиждень" type="button">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>Минулий</span>
+                </button>
+                <button id="btn-today-week" class="btn-nav-modern-center" type="button">Поточний тиждень</button>
+                <button id="btn-next-week" class="btn-nav-modern" title="Наступний тиждень" type="button">
+                    <span>Наступний</span> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </button>
+            </div>
+            <small style="color: #94a3b8; font-size: 12px; display: flex; align-items: center; gap: 5px; font-weight: 500;">
+                <i class="fa-solid fa-circle-info" style="color: #6366f1;"></i> 
+                Клікніть на заняття, щоб внести тему чи відмітки успішності.
+            </small>
+        </div>
+        
+        <div class="badge-container-modern">
+            <div id="week-type-badge" class="week-badge-new">
+                <span class="pulse-dot"></span>
+                <span id="week-type-badge-text" class="badge-text">—</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="schedule-modern-grid" id="teacher-schedule-container">
+        <div class="schedule-skeleton-loader">
+            <i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Синхронізація з розкладом викладача...
+        </div>
+    </div>
+</section>
+
+<div class="custom-modal" id="lesson-management-modal" style="display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+    <div class="modal-content" style="background-color: #fff; margin: 5% auto; padding: 24px; border-radius: 14px; max-width: 680px; border: 1px solid #e2e8f0; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+        
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px;">
+            <div>
+                <h3 id="lesson-modal-title" style="margin: 0; font-size: 18px; color: #0f172a; font-weight: 700;">Журнал заняття за розкладом</h3>
+                <p id="lesson-modal-subtitle" style="margin: 4px 0 0 0; font-size: 13px; color: #64748b; font-weight: 500;">Група: — | Дисципліна: —</p>
+            </div>
+            <button type="button" class="modal-close" id="btn-close-lesson-modal" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #94a3b8;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <form id="form-lesson-management">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div style="grid-column: span 2;">
+                    <label for="modal-lesson-work-type" style="display:block; margin-bottom:6px; font-size:13px; font-weight:600; color: #334155;">Тип занять / роботи</label>
+                    <select id="modal-lesson-work-type" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; box-sizing: border-box; font-size: 14px; background-color: #fff;">
+                    <option value="Пара">Звичайна пара / Семінар</option>
+                    <option value="Лекція">Лекція</option>
+                    <option value="Практична">Практична робота</option>
+                    <option value="Лабораторна">Лабораторна робота</option>
+                    <option value="Модуль">Контрольна робота / Модуль</option>
+                    <option value="Екзамен">Іспит / Залік</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="lesson-theme" style="display:block; margin-bottom:6px; font-size:13px; font-weight:600; color: #334155;">Тема заняття</label>
+                    <input type="text" id="lesson-theme" placeholder="Введіть тему лекції/практичної" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; box-sizing: border-box; font-size: 14px;">
+                </div>
+                
+                <div>
+                    <label for="lesson-homework" style="display:block; margin-bottom:6px; font-size:13px; font-weight:600; color: #334155;">Домашнє завдання</label>
+                    <input type="text" id="lesson-homework" placeholder="Читати параграф, виконати завдання" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; box-sizing: border-box; font-size: 14px;">
+                </div>
+            </div>
+
+            <h4 style="font-size: 14px; font-weight: 700; color: #0f172a; margin: 20px 0 10px 0; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-users-viewfinder" style="color: #6366f1;"></i> Відомість студентів:
+            </h4>
+            
+            <div style="max-height: 280px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                    <thead style="background: #f8fafc; position: sticky; top: 0; box-shadow: 0 1px 0 #e2e8f0; z-index: 10;">
+                        <tr>
+                            <th style="padding: 12px 10px; text-align: left; color: #475569; font-weight: 600;">Студент ПІБ</th>
+                            <th style="padding: 12px 10px; text-align: center; width: 120px; color: #475569; font-weight: 600;">Статус</th>
+                            <th style="padding: 12px 10px; text-align: center; width: 100px; color: #475569; font-weight: 600;">Бал (0-100)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lesson-students-attendance-list">
+                        <tr>
+                            <td colspan="3" style="text-align: center; padding: 25px; color: #94a3b8;">
+                                <i class="fa-solid fa-arrow-pointer fa-bounce" style="margin-right: 6px;"></i> Оберіть пару в розкладі для виклику списку груп...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+                <button type="button" id="btn-cancel-lesson-modal" style="padding: 10px 18px; background: #e2e8f0; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; color: #475569; transition: background 0.2s;">Скасувати</button>
+                <button type="submit" style="padding: 10px 20px; background: #6366f1; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2); transition: background 0.2s;">
+                    <i class="fa-solid fa-floppy-disk"></i> Зберегти відомість заняття
+                </button>
+            </div>
+        </form>
+        </div>
+    </div>
+
+        <div id="toast-notification" style="display: none; position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: #fff; padding: 14px 22px; border-radius: 10px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); z-index: 10000; align-items: center; gap: 10px; font-size: 14px; font-weight: 500;">
+            <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 16px;"></i>
+            <span>Дані успішно оновлено!</span>
+        </div>
+
+        <div id="custom-confirm-modal" class="custom-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+            <div class="modal-content" style="max-width: 400px; text-align: center; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+                <div style="color: #f43f5e; font-size: 40px; margin-bottom: 15px;">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <h3 style="margin-bottom: 10px; color: #0f172a; font-weight: 700;">Видалення оцінки</h3>
+                <p style="color: #64748b; font-size: 14px; margin-bottom: 20px; line-height: 1.5;">Ви впевнені, що хочете видалити цю оцінку? Цю дію не можна буде скасувати.</p>
+                <div style="display:flex; gap:12px; justify-content: center;">
+                    <button type="button" id="confirm-cancel-btn" style="padding: 10px 20px; background: #e2e8f0; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; color: #475569;">Скасувати</button>
+                    <button type="button" id="confirm-submit-btn" style="padding: 10px 20px; background: #f43f5e; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Видалити</button>
+                </div>
+            </div>
+        </div>
+        
+    <section id="settings-sec" class="content-section section-hidden" aria-labelledby="personal-data-title" style="display: none;">
+            <div class="settings-grid">
+                <div class="settings-block-card">
+                    <div class="settings-block-title">
+                        <i class="fa-solid fa-id-card" style="color: #6366f1; font-size: 18px;"></i>
+                        <h2 id="personal-data-title">Особисті дані</h2>
+                    </div>
+                    <p class="settings-subtitle">Особиста інформація вашого профілю</p>
+                    
+                    <form id="form-update-profile" novalidate>
+                        <div id="dynamic-role-container"></div>
+
+                        <div class="modern-input-group">
+                            <label for="edit-profile-name">Ім'я та прізвище</label>
+                            <div class="modern-field-wrapper disabled-field">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" id="edit-profile-name" value="" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="modern-input-group">
+                            <label for="edit-profile-email">Електронна адреса (корпоративна)</label>
+                            <div class="modern-field-wrapper disabled-field">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input type="email" id="edit-profile-email" value="" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="modern-input-group phone-input-group" style="margin-bottom: 24px !important;">
+                            <label for="edit-profile-phone">Контактний телефон</label>
+                            <div class="modern-field-wrapper">
+                                <i class="fa-solid fa-phone"></i>
+                                <input type="text" id="edit-profile-phone" class="phone-input-field edu-phone-mask" value="+380" maxlength="13">
+                            </div>
+                        </div>
+                        
+                        <div id="profile-msg-box"></div>
+                        <button type="submit" class="btn-modern-action" style="background: #10b981;">
+                            <i class="fa-solid fa-floppy-disk"></i> Зберегти зміни
+                        </button>
+                    </form>
+                </div>
+
+                <div class="settings-block-card">
+                    <div class="settings-block-title">
+                        <i class="fa-solid fa-key" style="color: #f43f5e; font-size: 18px;"></i>
+                        <h2>Безпека акаунту</h2>
+                    </div>
+                    <p class="settings-subtitle">Зміна пароля для доступу до системи</p>
+                    
+                    <form id="form-change-password" autocomplete="off" novalidate>
+                        <div class="modern-input-group">
+                            <label for="old-password">Поточний пароль</label>
+                            <div class="modern-field-wrapper">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="old-password" placeholder="Введіть поточний пароль" autocomplete="current-password">
+                            </div>
+                        </div>
+                        
+                        <div class="modern-input-group">
+                            <label for="new-password">Новий пароль</label>
+                            <div class="modern-field-wrapper">
+                                <i class="fa-solid fa-lock-open"></i>
+                                <input type="password" id="new-password" placeholder="Введіть новий пароль" autocomplete="new-password">
+                            </div>
+                        </div>
+
+                        <div class="modern-input-group" style="margin-bottom: 24px !important;">
+                            <label for="confirm-password">Підтвердження нового пароля</label>
+                            <div class="modern-field-wrapper">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <input type="password" id="confirm-password" placeholder="Повторіть новий пароль">
+                            </div>
+                        </div>
+
+                        <div id="settings-msg-box"></div>
+                        <button type="submit" class="btn-modern-action" style="background: #f43f5e;">
+                            <i class="fa-solid fa-shield-halved"></i> Оновити пароль
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+</main>
+
+<script src="js/main.js"></script>
+<script src="js/teacher.js"></script>
+
+</body>
+</html>

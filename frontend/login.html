@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Вхід | EDU PLATFORM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+
+    <div class="login-container">
+        <div class="login-info">
+            <h1>EduPlatform</h1>
+            <p>Платформа управління освітнім процесом з аналітичними дашбордами, обліком успішності та системою управління навчанням.</p>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Візуалізація успішності та динаміки</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Розмежування прав доступу</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Інформація у реальному часі</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-card">
+            <div class="card-header">
+                <h2>Авторизація</h2>
+                <span>Введіть свої дані для доступу</span>
+            </div>
+
+            <div id="error" class="error-msg" style="display: none;"></div>
+            <div id="success" class="success-msg" style="display: none;">Авторизація успішна!</div>
+
+            <form id="loginForm" autocomplete="on">
+                <div class="form-group">
+                    <label for="email">Електронна пошта</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder="example@edu.ua" required autofocus
+                               oninvalid="this.setCustomValidity('Будь ласка, заповніть це поле')"
+                               oninput="this.setCustomValidity('')">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required
+                               oninvalid="this.setCustomValidity('Будь ласка, заповніть це поле')"
+                               oninput="this.setCustomValidity('')">
+                        <button type="button" class="toggle-pass" id="togglePassBtn" aria-label="Показати/приховати пароль">
+                            <i id="toggleIcon" class="fa-solid fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="loginBtn" class="btn-login">
+                    <span>Увійти до системи</span>
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>
