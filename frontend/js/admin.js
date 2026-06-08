@@ -1,4 +1,4 @@
-window.API_URL = window.API_URL || 'https://caring-respect-production-c61c.up.railway.app/api';
+const BASE_URL = window.API_URL || 'https://caring-respect-production-c61c.up.railway.app/api';
 if (typeof window.charts === 'undefined') {
     window.charts = {
         globalGpa: null,
