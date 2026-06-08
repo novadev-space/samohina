@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api';
+window.API_URL = window.API_URL || 'https://caring-respect-production-c61c.up.railway.app/api';
 
 // Старт при завантаженні сторінки
 document.addEventListener('DOMContentLoaded', () => {
