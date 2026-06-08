@@ -1,5 +1,4 @@
-window.API_URL = window.API_URL || 'https://caring-respect-production-c61c.up.railway.app/api';
-
+const API_URL = 'https://caring-respect-production-c61c.up.railway.app/api';
 // Старт при завантаженні сторінки
 document.addEventListener('DOMContentLoaded', () => {
     
