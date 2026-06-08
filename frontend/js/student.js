@@ -1,5 +1,5 @@
 // Адреса сервера для запитів
-const BASE_URL = window.API_URL || 'http://localhost:5000/api'; 
+const BASE_URL = window.API_URL || 'caring-respect-production-c61c.up.railway.app/api'; 
 
 // Розклад
 const LESSON_MAP_FOUR = {
